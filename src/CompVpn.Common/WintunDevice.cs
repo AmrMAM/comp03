@@ -7,6 +7,13 @@ internal static class WintunDevice
 {
     public static TunDevice Create(string requestedName)
     {
+        if (!NativeLibrary.TryLoad("wintun.dll", out var libraryHandle))
+        {
+            throw new InvalidOperationException("Unable to load wintun.dll. Install the Wintun driver and ensure wintun.dll is on PATH or beside the executable.");
+        }
+
+        NativeLibrary.Free(libraryHandle);
+
         var adapterName = string.IsNullOrWhiteSpace(requestedName) ? "CompVpn" : requestedName;
         var adapter = WintunOpenAdapter(adapterName);
         if (adapter == IntPtr.Zero)

@@ -1,6 +1,6 @@
 # CompVPN (.NET)
 
-This repository contains a minimal, network-level VPN prototype written in .NET 8. It creates a TUN virtual interface on Linux, exchanges raw IP packets with a UDP-based tunnel, and demonstrates how to route client traffic through a server.
+This repository contains a minimal, network-level VPN prototype written in .NET 10. It creates a TUN virtual interface on Linux, exchanges raw IP packets with a UDP-based tunnel, and demonstrates how to route client traffic through a server.
 
 > **Note:** This is a learning-oriented implementation and does not include production security features such as mutual authentication, encryption, or replay protection. If you need a production VPN, use WireGuard or OpenVPN.
 
