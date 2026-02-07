@@ -5,26 +5,34 @@ namespace CompVpn.Common;
 
 public sealed class TunDevice : IDisposable
 {
-    private readonly SafeFileHandle _handle;
-    private readonly FileStream _stream;
-
     public string Name { get; }
-    public Stream Stream => _stream;
+    public Stream Stream { get; }
+    private readonly Action _dispose;
 
-    private TunDevice(SafeFileHandle handle, string name)
+    internal TunDevice(string name, Stream stream, Action dispose)
     {
-        _handle = handle;
         Name = name;
-        _stream = new FileStream(_handle, FileAccess.ReadWrite, 4096, isAsync: true);
+        Stream = stream;
+        _dispose = dispose;
     }
 
     public static TunDevice Create(string requestedName)
     {
-        if (!OperatingSystem.IsLinux())
+        if (OperatingSystem.IsLinux())
         {
-            throw new PlatformNotSupportedException("Only Linux /dev/net/tun is implemented.");
+            return CreateLinux(requestedName);
         }
 
+        if (OperatingSystem.IsWindows())
+        {
+            return WintunDevice.Create(requestedName);
+        }
+
+        throw new PlatformNotSupportedException("Only Linux and Windows are implemented.");
+    }
+
+    private static TunDevice CreateLinux(string requestedName)
+    {
         var fd = open("/dev/net/tun", O_RDWR);
         if (fd < 0)
         {
@@ -45,13 +53,14 @@ public sealed class TunDevice : IDisposable
         }
 
         var handle = new SafeFileHandle((IntPtr)fd, ownsHandle: true);
-        return new TunDevice(handle, ifr.ifr_name);
+        var stream = new FileStream(handle, FileAccess.ReadWrite, 4096, isAsync: true);
+        return new TunDevice(ifr.ifr_name, stream, () => { });
     }
 
     public void Dispose()
     {
-        _stream.Dispose();
-        _handle.Dispose();
+        Stream.Dispose();
+        _dispose();
     }
 
     private const int O_RDWR = 2;

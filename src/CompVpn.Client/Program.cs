@@ -111,7 +111,16 @@ internal static class NetworkConfigurator
     {
         if (!OperatingSystem.IsLinux())
         {
-            Console.WriteLine("Skipping network configuration: only Linux is implemented.");
+            if (OperatingSystem.IsWindows())
+            {
+                var mask = PrefixToMask(prefix);
+                Run("netsh", $"interface ip set address name=\"{interfaceName}\" static {clientIp} {mask} {gatewayIp}");
+                Run("netsh", $"interface ip set dns name=\"{interfaceName}\" static {dnsIp}");
+                Run("route", $"add 0.0.0.0 mask 0.0.0.0 {gatewayIp}");
+                return;
+            }
+
+            Console.WriteLine("Skipping network configuration: unsupported OS.");
             return;
         }
 
@@ -136,5 +145,12 @@ internal static class NetworkConfigurator
             var error = process.StandardError.ReadToEnd();
             throw new InvalidOperationException($"Command '{file} {args}' failed: {error}");
         }
+    }
+
+    private static string PrefixToMask(byte prefix)
+    {
+        var mask = prefix == 0 ? 0u : uint.MaxValue << (32 - prefix);
+        var bytes = BitConverter.GetBytes(mask).Reverse().ToArray();
+        return string.Join('.', bytes);
     }
 }

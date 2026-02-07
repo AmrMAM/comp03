@@ -30,6 +30,22 @@ sudo dotnet run --project src/CompVpn.Server -- --bind 0.0.0.0 --port 51820 --tu
 sudo dotnet run --project src/CompVpn.Client -- --server <server_public_ip> --port 51820 --tun cvpn0 --name laptop
 ```
 
+## Run (Windows)
+
+> **Requirement:** Install the [Wintun](https://www.wintun.net/) driver and make sure `wintun.dll` is available on the system path or alongside the executable.
+
+### Server
+
+```powershell
+dotnet run --project src/CompVpn.Server -- --bind 0.0.0.0 --port 51820 --tun CompVpn --server-ip 10.0.0.1 --prefix 24
+```
+
+### Client
+
+```powershell
+dotnet run --project src/CompVpn.Client -- --server <server_public_ip> --port 51820 --tun CompVpn --name laptop
+```
+
 ### What happens
 
 - Server allocates a client IP from `10.0.0.10-10.0.0.209` and returns it in an `Assigned` message.
@@ -53,6 +69,12 @@ sudo dotnet run --project src/CompVpn.Client -- --server <server_public_ip> --po
    - Add authentication and encryption (for example, Noise or libsodium).
    - Rotate keys and implement replay protection.
    - Add per-client ACLs and traffic accounting.
+
+### Windows hosting notes
+
+- Ensure the Wintun driver is installed and `wintun.dll` is discoverable by the server process.
+- Open UDP port `51820` in the Windows Firewall.
+- The server will attempt to enable IP forwarding and set up a `New-NetNat` rule named `CompVpnNat`. If it already exists, update or remove it before re-running.
 
 ## Security notes
 

@@ -148,7 +148,17 @@ internal static class NetworkConfigurator
     {
         if (!OperatingSystem.IsLinux())
         {
-            Console.WriteLine("Skipping network configuration: only Linux is implemented.");
+            if (OperatingSystem.IsWindows())
+            {
+                var mask = PrefixToMask(prefix);
+                Run("netsh", $"interface ip set address name=\"{interfaceName}\" static {serverIp} {mask}");
+                RunPowerShell($"Set-NetIPInterface -InterfaceAlias \"{interfaceName}\" -Forwarding Enabled");
+                var cidr = $"{NetworkPrefix(serverIp, prefix)}/{prefix}";
+                RunPowerShell($"New-NetNat -Name \"CompVpnNat\" -InternalIPInterfaceAddressPrefix \"{cidr}\"");
+                return;
+            }
+
+            Console.WriteLine("Skipping network configuration: unsupported OS.");
             return;
         }
 
@@ -173,6 +183,31 @@ internal static class NetworkConfigurator
             var error = process.StandardError.ReadToEnd();
             throw new InvalidOperationException($"Command '{file} {args}' failed: {error}");
         }
+    }
+
+    private static void RunPowerShell(string command)
+        => Run("powershell", $"-NoProfile -ExecutionPolicy Bypass -Command \"{command}\"");
+
+    private static string PrefixToMask(byte prefix)
+    {
+        var mask = prefix == 0 ? 0u : uint.MaxValue << (32 - prefix);
+        var bytes = BitConverter.GetBytes(mask).Reverse().ToArray();
+        return string.Join('.', bytes);
+    }
+
+    private static string NetworkPrefix(IPAddress address, byte prefix)
+    {
+        var bytes = address.GetAddressBytes();
+        if (bytes.Length != 4)
+        {
+            throw new InvalidOperationException("Only IPv4 is supported.");
+        }
+
+        var mask = prefix == 0 ? 0u : uint.MaxValue << (32 - prefix);
+        var ip = BitConverter.ToUInt32(bytes.Reverse().ToArray(), 0);
+        var network = ip & mask;
+        var networkBytes = BitConverter.GetBytes(network).Reverse().ToArray();
+        return string.Join('.', networkBytes);
     }
 }
 
