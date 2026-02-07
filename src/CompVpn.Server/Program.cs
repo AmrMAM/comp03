@@ -79,7 +79,8 @@ var clientToTunTask = Task.Run(async () =>
 
         if (Protocol.TryParseData(packet.Buffer, out var payload))
         {
-            await tun.Stream.WriteAsync(payload, cts.Token);
+            var buffer = payload.ToArray();
+            await tun.Stream.WriteAsync(buffer, cts.Token);
         }
     }
 }, cts.Token);

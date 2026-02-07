@@ -57,7 +57,8 @@ var receiveTask = Task.Run(async () =>
         var serverPacket = await udp.ReceiveAsync(cts.Token);
         if (Protocol.TryParseData(serverPacket.Buffer, out var payload))
         {
-            await tun.Stream.WriteAsync(payload, cts.Token);
+            var buffer = payload.ToArray();
+            await tun.Stream.WriteAsync(buffer, cts.Token);
         }
     }
 }, cts.Token);

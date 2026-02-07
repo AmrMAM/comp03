@@ -56,9 +56,9 @@ public static class Protocol
     {
         var buffer = new byte[1 + 4 + 4 + 4 + 1];
         buffer[0] = (byte)MessageType.Assigned;
-        message.ClientIp.TryWriteBytes(buffer.AsSpan(1, 4));
-        message.ServerIp.TryWriteBytes(buffer.AsSpan(5, 4));
-        message.DnsIp.TryWriteBytes(buffer.AsSpan(9, 4));
+        message.ClientIp.TryWriteBytes(buffer.AsSpan(1, 4), out _);
+        message.ServerIp.TryWriteBytes(buffer.AsSpan(5, 4), out _);
+        message.DnsIp.TryWriteBytes(buffer.AsSpan(9, 4), out _);
         buffer[13] = message.Prefix;
         return buffer;
     }
