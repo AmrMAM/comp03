@@ -32,7 +32,7 @@ sudo dotnet run --project src/CompVpn.Client -- --server <server_public_ip> --po
 
 ## Run (Windows)
 
-> **Requirement:** Install the [Wintun](https://www.wintun.net/) driver and make sure `wintun.dll` is available on the system path or alongside the executable.
+> **Requirement:** Install the [Wintun](https://www.wintun.net/) driver and make sure `wintun.dll` is available on the system path or alongside the executable. Run the server/client in an elevated PowerShell prompt.
 
 ### Server
 

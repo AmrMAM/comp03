@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 namespace CompVpn.Common;
 
@@ -7,7 +6,10 @@ internal static class WintunDevice
 {
     public static TunDevice Create(string requestedName)
     {
-        if (!NativeLibrary.TryLoad("wintun.dll", out var libraryHandle))
+        var baseDirectory = AppContext.BaseDirectory;
+        var localPath = Path.Combine(baseDirectory, "wintun.dll");
+        if (!NativeLibrary.TryLoad("wintun.dll", out var libraryHandle)
+            && !NativeLibrary.TryLoad(localPath, out libraryHandle))
         {
             throw new InvalidOperationException("Unable to load wintun.dll. Install the Wintun driver and ensure wintun.dll is on PATH or beside the executable.");
         }
@@ -16,6 +18,7 @@ internal static class WintunDevice
 
         var adapterName = string.IsNullOrWhiteSpace(requestedName) ? "CompVpn" : requestedName;
         var adapter = WintunOpenAdapter(adapterName);
+        var openError = adapter == IntPtr.Zero ? Marshal.GetLastWin32Error() : 0;
         if (adapter == IntPtr.Zero)
         {
             adapter = WintunCreateAdapter(adapterName, "CompVpn", IntPtr.Zero);
@@ -23,7 +26,10 @@ internal static class WintunDevice
 
         if (adapter == IntPtr.Zero)
         {
-            throw new InvalidOperationException("Failed to create or open Wintun adapter. Ensure wintun.dll is available.");
+            var createError = Marshal.GetLastWin32Error();
+            throw new InvalidOperationException(
+                $"Failed to create or open Wintun adapter. Open error: {openError}, create error: {createError}. " +
+                "Ensure the Wintun driver is installed and run with administrative privileges.");
         }
 
         var session = WintunStartSession(adapter, 0x400000);
