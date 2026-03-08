@@ -1,0 +1,28 @@
+<MudCard Class="pa-4">
+    <MudText Typo="Typo.h6">Active Timer</MudText>
+    <MudText Typo="Typo.h4">@_time</MudText>
+    <MudStack Row="true" Spacing="2">
+        <MudButton Color="Color.Primary" OnClick="Start">Start</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Stop">Stop</MudButton>
+    </MudStack>
+</MudCard>
+
+@code {
+    private string _time = "00:00:00";
+    private System.Timers.Timer? _timer;
+    private TimeSpan _elapsed;
+
+    private void Start()
+    {
+        _timer ??= new System.Timers.Timer(1000);
+        _timer.Elapsed += (_, _) =>
+        {
+            _elapsed = _elapsed.Add(TimeSpan.FromSeconds(1));
+            _time = _elapsed.ToString(@"hh\:mm\:ss");
+            InvokeAsync(StateHasChanged);
+        };
+        _timer.Start();
+    }
+
+    private void Stop() => _timer?.Stop();
+}

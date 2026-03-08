@@ -1,0 +1,9 @@
+<MudCard Class="pa-4">
+    <MudText Typo="Typo.h6">Time by Category</MudText>
+    <MudChart ChartType="ChartType.Pie" Labels="_labels" Data="_data" />
+</MudCard>
+
+@code {
+    private readonly string[] _labels = ["Work", "Study", "Personal"];
+    private readonly double[] _data = [8, 4, 2];
+}

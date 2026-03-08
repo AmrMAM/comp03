@@ -1,0 +1,36 @@
+@page "/tasks"
+@inject AMWatch.Application.Services.TaskService TaskService
+
+<MudText Typo="Typo.h4">Tasks</MudText>
+
+<MudStack Row="true" Spacing="2" Class="mb-4">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddDialog">Add Task</MudButton>
+</MudStack>
+
+<MudTable Items="_tasks">
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Priority</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Due Date</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Title</MudTd>
+        <MudTd>@context.Priority</MudTd>
+        <MudTd>@context.Status</MudTd>
+        <MudTd>@context.DueDate.ToShortDateString()</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private IEnumerable<AMWatch.Application.DTOs.TaskDto> _tasks = Array.Empty<AMWatch.Application.DTOs.TaskDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _tasks = await TaskService.GetTasksAsync(Guid.Empty);
+    }
+
+    private void OpenAddDialog()
+    {
+    }
+}
