@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../AMWatch.Application/AMWatch.Application.csproj" />
+    <ProjectReference Include="../AMWatch.Domain/AMWatch.Domain.csproj" />
+    <ProjectReference Include="../AMWatch.Infrastructure/AMWatch.Infrastructure.csproj" />
+    <ProjectReference Include="../AMWatch.Persistence/AMWatch.Persistence.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MudBlazor" Version="7.15.0" />
+    <PackageReference Include="MudBlazor.Services" Version="7.15.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0-preview.1.25081.5" />
+  </ItemGroup>
+</Project>

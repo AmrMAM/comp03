@@ -1,0 +1,9 @@
+<MudCard Class="pa-4">
+    <MudText Typo="Typo.h6">Task Completion</MudText>
+    <MudChart ChartType="ChartType.Bar" Labels="_labels" Data="_data" />
+</MudCard>
+
+@code {
+    private readonly string[] _labels = ["Completed", "Pending"];
+    private readonly double[] _data = [12, 4];
+}

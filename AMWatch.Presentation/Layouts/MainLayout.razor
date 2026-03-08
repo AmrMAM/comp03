@@ -1,0 +1,17 @@
+@inherits LayoutComponentBase
+
+<MudLayout>
+    <MudAppBar Color="Color.Primary">
+        <MudText Typo="Typo.h6">AM Watch</MudText>
+    </MudAppBar>
+
+    <MudDrawer Open="true" Elevation="1">
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>

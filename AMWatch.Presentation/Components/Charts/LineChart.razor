@@ -1,0 +1,9 @@
+<MudCard Class="pa-4">
+    <MudText Typo="Typo.h6">Weekly Productivity</MudText>
+    <MudChart ChartType="ChartType.Line" Labels="_labels" Data="_data" />
+</MudCard>
+
+@code {
+    private readonly string[] _labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    private readonly double[] _data = [3, 5, 4, 6, 7, 2, 1];
+}

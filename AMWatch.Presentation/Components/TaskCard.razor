@@ -1,0 +1,11 @@
+<MudCard Class="ma-2 pa-2">
+    <MudCardContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+        <MudText Typo="Typo.body2">@Description</MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string Description { get; set; } = string.Empty;
+}

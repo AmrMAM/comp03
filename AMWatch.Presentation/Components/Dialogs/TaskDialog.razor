@@ -1,0 +1,21 @@
+<MudDialog>
+    <DialogContent>
+        <MudTextField Label="Title" @bind-Value="Title" />
+        <MudTextField Label="Description" @bind-Value="Description" />
+        <MudDatePicker Label="Due Date" @bind-Date="DueDate" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance MudDialog { get; set; } = default!;
+    private string Title { get; set; } = string.Empty;
+    private string Description { get; set; } = string.Empty;
+    private DateTime? DueDate { get; set; }
+
+    private void Save() => MudDialog.Close(DialogResult.Ok(true));
+    private void Cancel() => MudDialog.Cancel();
+}

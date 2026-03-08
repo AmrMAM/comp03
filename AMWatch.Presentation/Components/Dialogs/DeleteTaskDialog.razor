@@ -1,0 +1,15 @@
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">Delete this task?</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Delete">Delete</MudButton>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance MudDialog { get; set; } = default!;
+    private void Delete() => MudDialog.Close(DialogResult.Ok(true));
+    private void Cancel() => MudDialog.Cancel();
+}
